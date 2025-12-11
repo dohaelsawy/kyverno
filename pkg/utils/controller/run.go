@@ -73,7 +73,7 @@ func handleErr[T comparable](ctx context.Context, logger logr.Logger, controller
 		queue.Forget(obj)
 	} else if queue.NumRequeues(obj) < maxRetries {
 		logger.V(3).Info("Retrying request", "obj", obj, "error", err.Error())
-		queue.AddRateLimited(obj)
+		queue.AddAfter(obj, 5*time.Second)
 		if metric != nil {
 			metric.RecordRequeueIncrease(ctx, controllerName, queue.NumRequeues(obj))
 		}
